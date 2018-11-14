@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Сергей Стреха](https://up.htmlacademy.ru/javascript/16/user/845289).
-* Наставник: `Неизвестно`.
+* Наставник: [Евгений Карпов](https://htmlacademy.ru/profile/id70583).
 
 ---
 
