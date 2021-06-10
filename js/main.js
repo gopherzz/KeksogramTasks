@@ -82,11 +82,6 @@ function generatePhotos(count = 25) {
 
 var photos = generatePhotos()
 
-function showBigPhoto() {
-
-}
-
-
 if ('content' in document.createElement('template')) {
   var pictures = document.querySelector(".pictures");
 

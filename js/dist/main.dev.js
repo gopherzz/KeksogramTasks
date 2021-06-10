@@ -106,8 +106,6 @@ function generatePhotos() {
 
 var photos = generatePhotos();
 
-function showBigPhoto() {}
-
 if ('content' in document.createElement('template')) {
   var pictures = document.querySelector(".pictures");
 
