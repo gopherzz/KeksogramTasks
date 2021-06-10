@@ -69,18 +69,53 @@ function generatePhotos(count = 25) {
     let comments = [];
 
     for (let i = 0; i < COMMENTS_COUNT; i++) {
-      let user = new User(choiceFromArray(NAMES), `img/avatar-${getRandomInt(1, 7)}.svg`);
-      let comment = new CommentFromUser(user, choiceFromArray(MESSAGES));
-
+      // let user = new User(choiceFromArray(NAMES), `img/avatar-${getRandomInt(1, 7)}.svg`);
+      // let comment = new CommentFromUser(user, choiceFromArray(MESSAGES));
+      let user = {
+        name: choiceFromArray(NAMES),
+        avatar: `img/avatar-${getRandomInt(1, 7)}.svg`
+      };
+      let comment = {
+        user: user,
+        message: choiceFromArray(MESSAGES)
+      };
       comments.push(comment);
     }
 
+    res.push({
+      url: url,
+      likes: likes,
+      comments: comments,
+      description: description
+    });
+  }
+  return res;
+}
+
+var rawPhotos = generatePhotos();
+// console.log(rawPhotos);
+
+function parsePhotos(photos) {
+  let res = [];
+  for (let raw_photo of photos) {
+    let url = raw_photo.url;
+    let likes = raw_photo.likes;
+    let description = raw_photo.description;
+
+    let comments = []
+    for (let comment of raw_photo.comments) {
+      let user = new User(comment.user.name, comment.user.avatar);
+      let message = comment.message;
+
+      comments.push(new CommentFromUser(user, message));
+    }
     res.push(new Photo(url, likes, comments, description));
   }
   return res;
 }
 
-var photos = generatePhotos()
+var photos = parsePhotos(rawPhotos)
+// console.log(photos)
 
 if ('content' in document.createElement('template')) {
   var pictures = document.querySelector(".pictures");

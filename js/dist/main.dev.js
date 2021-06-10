@@ -93,55 +93,55 @@ function generatePhotos() {
     var comments = [];
 
     for (var _i = 0; _i < COMMENTS_COUNT; _i++) {
-      var user = new User(choiceFromArray(NAMES), "img/avatar-".concat(getRandomInt(1, 7), ".svg"));
-      var comment = new CommentFromUser(user, choiceFromArray(MESSAGES));
+      // let user = new User(choiceFromArray(NAMES), `img/avatar-${getRandomInt(1, 7)}.svg`);
+      // let comment = new CommentFromUser(user, choiceFromArray(MESSAGES));
+      var user = {
+        name: choiceFromArray(NAMES),
+        avatar: "img/avatar-".concat(getRandomInt(1, 7), ".svg")
+      };
+      var comment = {
+        user: user,
+        message: choiceFromArray(MESSAGES)
+      };
       comments.push(comment);
     }
 
-    res.push(new Photo(url, likes, comments, description));
+    res.push({
+      url: url,
+      likes: likes,
+      comments: comments,
+      description: description
+    });
   }
 
   return res;
 }
 
-var photos = generatePhotos();
+var rawPhotos = generatePhotos(); // console.log(rawPhotos);
 
-if ('content' in document.createElement('template')) {
-  var pictures = document.querySelector(".pictures");
+function parsePhotos(photos) {
+  var res = [];
+  var _iteratorNormalCompletion = true;
+  var _didIteratorError = false;
+  var _iteratorError = undefined;
 
-  for (var i = 0; i < photos.length; i++) {
-    var photoDOM = photos[i].getDOM(i);
-    pictures.appendChild(photoDOM);
-  }
-}
-
-var _iteratorNormalCompletion = true;
-var _didIteratorError = false;
-var _iteratorError = undefined;
-
-try {
-  var _loop = function _loop() {
-    var photoElement = _step.value;
-    photoElement.addEventListener("click", function () {
-      var big = document.querySelector(".big-picture");
-      var data = photoElement.getAttribute("data");
-      var photo = photos[Number.parseInt(data)];
-      var bigPicPreview = big.querySelector(".big-picture__preview");
-      bigPicPreview.querySelector(".big-picture__img>img").setAttribute("src", photo.url);
-      var bigPicSocial = bigPicPreview.querySelector(".big-picture__social");
-      bigPicSocial.querySelector(".social__caption").textContent = photo.description;
-      bigPicSocial.querySelector(".social__likes>.likes-count").textContent = photo.likes;
-      bigPicSocial.querySelector(".social__comment-count>.comments-count").textContent = photo.comments.length;
-      var comments = bigPicSocial.querySelector(".social__comments");
-      comments.innerHTML = "";
+  try {
+    for (var _iterator = photos[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      var raw_photo = _step.value;
+      var url = raw_photo.url;
+      var likes = raw_photo.likes;
+      var description = raw_photo.description;
+      var comments = [];
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
       var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator2 = photo.comments[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (var _iterator2 = raw_photo.comments[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
           var comment = _step2.value;
-          comments.appendChild(comment.getDOM());
+          var user = new User(comment.user.name, comment.user.avatar);
+          var message = comment.message;
+          comments.push(new CommentFromUser(user, message));
         }
       } catch (err) {
         _didIteratorError2 = true;
@@ -158,6 +158,80 @@ try {
         }
       }
 
+      res.push(new Photo(url, likes, comments, description));
+    }
+  } catch (err) {
+    _didIteratorError = true;
+    _iteratorError = err;
+  } finally {
+    try {
+      if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+        _iterator["return"]();
+      }
+    } finally {
+      if (_didIteratorError) {
+        throw _iteratorError;
+      }
+    }
+  }
+
+  return res;
+}
+
+var photos = parsePhotos(rawPhotos); // console.log(photos)
+
+if ('content' in document.createElement('template')) {
+  var pictures = document.querySelector(".pictures");
+
+  for (var i = 0; i < photos.length; i++) {
+    var photoDOM = photos[i].getDOM(i);
+    pictures.appendChild(photoDOM);
+  }
+}
+
+var _iteratorNormalCompletion3 = true;
+var _didIteratorError3 = false;
+var _iteratorError3 = undefined;
+
+try {
+  var _loop = function _loop() {
+    var photoElement = _step3.value;
+    photoElement.addEventListener("click", function () {
+      var big = document.querySelector(".big-picture");
+      var data = photoElement.getAttribute("data");
+      var photo = photos[Number.parseInt(data)];
+      var bigPicPreview = big.querySelector(".big-picture__preview");
+      bigPicPreview.querySelector(".big-picture__img>img").setAttribute("src", photo.url);
+      var bigPicSocial = bigPicPreview.querySelector(".big-picture__social");
+      bigPicSocial.querySelector(".social__caption").textContent = photo.description;
+      bigPicSocial.querySelector(".social__likes>.likes-count").textContent = photo.likes;
+      bigPicSocial.querySelector(".social__comment-count>.comments-count").textContent = photo.comments.length;
+      var comments = bigPicSocial.querySelector(".social__comments");
+      comments.innerHTML = "";
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = photo.comments[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var comment = _step4.value;
+          comments.appendChild(comment.getDOM());
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+            _iterator4["return"]();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
+      }
+
       bigPicPreview.querySelector(".big-picture__cancel").addEventListener("click", function () {
         big.classList.add("hidden");
       });
@@ -165,20 +239,20 @@ try {
     });
   };
 
-  for (var _iterator = document.querySelectorAll("a.picture")[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+  for (var _iterator3 = document.querySelectorAll("a.picture")[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
     _loop();
   }
 } catch (err) {
-  _didIteratorError = true;
-  _iteratorError = err;
+  _didIteratorError3 = true;
+  _iteratorError3 = err;
 } finally {
   try {
-    if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-      _iterator["return"]();
+    if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+      _iterator3["return"]();
     }
   } finally {
-    if (_didIteratorError) {
-      throw _iteratorError;
+    if (_didIteratorError3) {
+      throw _iteratorError3;
     }
   }
 }
